@@ -1,0 +1,33 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: proyecto_php_web
+    ports: 
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on: 
+      - db
+  db:
+    image: mariadb:latest
+    container_name: proyecto_php_db
+    environment:
+      MYSQL_DATABASE: basedatos_proyecto
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: proyectophp_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db

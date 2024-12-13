@@ -62,6 +62,47 @@ $stmt -> execute() ;
 
 $libro = $stmt -> fetchObject() ;
 
+$comentarioEditado = null;
+$mostrarEditarModal = false;
+
+if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+    $idComentario = (int) $_GET['edit'];
+
+    // Obtener los datos del comentario para edición
+    $sql = "SELECT * FROM Comentarios WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
+    $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT); // Solo el autor puede editar
+    $stmt->execute();
+    $comentarioEditado = $stmt->fetchObject();
+
+    if ($comentarioEditado) {
+        $mostrarEditarModal = true; // Mostrar modal de edición automáticamente
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
+    $idComentario = (int) $_POST['idComentario'];
+    $textoComentario = $_POST['textoComentario'] ?? '';
+
+    if (!empty($textoComentario)) {
+        $sql = "UPDATE Comentarios SET TextoComentario = :textoComentario, FechaComentario = :fecha 
+                WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
+        $stmt->bindParam(':fecha', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
+        $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Redirigir para evitar reenvíos POST
+        header("Location: ./info.php?id=$idLibro");
+        exit;
+    } else {
+        $mostrarEditarModal = true; // Reabrir modal si hay errores
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -103,12 +144,12 @@ $libro = $stmt -> fetchObject() ;
             background-color: #a55817;
         }
 
-        #nuevo-comentario, #enviar {
+        #nuevo-comentario, #enviar, #guardar {
             background-color: rgb(46, 169, 172) ;
             color: #ffffff !important;
         }
 
-        #nuevo-comentario:hover, #enviar:hover  {
+        #nuevo-comentario:hover, #enviar:hover, #guardar:hover {
             background-color: #268a8d;
         }
 
@@ -169,9 +210,9 @@ $libro = $stmt -> fetchObject() ;
                     <p><?= $comentario -> FechaComentario ?></p>
                     <p class="card-text"><?= $comentario -> TextoComentario ?></p>
             <?php   if(($comentario -> IDUsuario) === ($usuario -> IDUsuario))  { ?>
-                    <a href="./editarCom.php?id=<?= $comentario -> IDComentario ?>" id="editar" class="btn">Editar</a>
+                    <a href="./info.php?id=<?= $idLibro ?>&edit=<?= $comentario->IDComentario ?>" id="editar" class="btn">Editar</a>
             <?php } if((($comentario -> IDUsuario) === ($usuario -> IDUsuario )) || ($usuario -> Rol === "Administrador")) { ?>
-                    <a href="./borrarCom.php?id=<?= $comentario -> IDComentario ?>" id="borrar" class="btn btn-danger">Borrar</a>
+                    <a href="./borrar.php?id=<?= $comentario -> IDComentario ?>" id="borrar" class="btn btn-danger">Borrar</a>
                 </div>
             <?php } } 
                 if(!$hayComentarios) { ?>
@@ -200,6 +241,7 @@ $libro = $stmt -> fetchObject() ;
         </div>
         <?php   } ?>
 
+                <!-- MODAL PARA AÑADIR COMENTARIO -->
         <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -222,11 +264,46 @@ $libro = $stmt -> fetchObject() ;
                 </div>
             </div>
         </div>
+
+                <!-- MODAL PARA EDITAR COMENTARIO -->
+        <div class="modal fade <?= $mostrarEditarModal ? 'show' : '' ?>" id="editModal" tabindex="-1" aria-hidden="true" style="<?= $mostrarEditarModal ? 'display: block;' : '' ?>">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Comentario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="POST">
+                            <!-- Campo oculto para el ID del comentario -->
+                            <input type="hidden" name="idComentario" value="<?= $comentarioEditado->IDComentario ?? '' ?>">
+
+                            <div class="mb-3">
+                                <label for="textoComentario" class="form-label">Comentario:</label>
+                                <textarea id="textoComentario" name="textoComentario" class="form-control" rows="4" required><?= $comentarioEditado->TextoComentario ?? '' ?></textarea>
+                            </div>
+                            <button type="submit" id="guardar" class="btn">Guardar Cambios</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+
+<?php if ($mostrarEditarModal){ ?>
+    var editModal = new bootstrap.Modal(document.getElementById('editModal'), {
+        backdrop: 'static',
+        keyboard: false
+    });
+    editModal.show();
+    <?php } ?>
+
+</script>
 
 </html>

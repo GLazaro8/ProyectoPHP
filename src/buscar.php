@@ -122,6 +122,7 @@
                 if(!empty($libros)) {
                     foreach($libros as $libro) {                    
             ?>
+        <hr>
         <div class="card mb-3" style="width: 100%;">
             <div class="row g-0 align-items-center">
                 <div class="col-md-4">
@@ -144,6 +145,7 @@
                         No hay ningún libro que coincida con su búsqueda
                     </div> 
         <?php } ?>
+        <hr>
     </div>
     
 </body>

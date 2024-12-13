@@ -14,7 +14,6 @@ if ((empty($_SESSION['_usuario'])) ||
 // Actualizamos el tiempo de sesión
 $_SESSION["_tiempo"] = time() + 3000;
 $usuario = unserialize($_SESSION['_usuario']) ;
-var_dump($usuario) ;
 
 try {
 
@@ -28,6 +27,32 @@ try {
 
 if(isset($_GET['id'])) {
     $idLibro = $_GET['id'];
+}
+
+$mostrarModal = false; // Para reabrir el modal si hay errores
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $textoComentario = $_POST['textoComentario'] ?? '';
+
+    if (!empty($textoComentario)) {
+        $idUsu = $usuario->IDUsuario;
+        $idLib = $idLibro;
+        $fecha = date('Y-m-d H:i:s');
+
+        $sql = "INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario, FechaComentario) 
+                VALUES (:idUsu, :idLib, :textoComentario, :fecha)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':idUsu', $idUsu, PDO::PARAM_INT);
+        $stmt->bindParam(':idLib', $idLib, PDO::PARAM_INT);
+        $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
+        $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // Redirigir para evitar reenvíos POST
+        header("Location: ./info.php?id=$idLib");
+        exit;
+    } else {
+        $mostrarModal = true; // Si no hay texto, mostramos el modal otra vez
+    }
 }
 
 $sql = "SELECT * FROM Libros l JOIN GenerosLiterarios gl ON l.IDGenero = gl.IDGenero WHERE l.IDLibro = :id ;" ;
@@ -76,6 +101,15 @@ $libro = $stmt -> fetchObject() ;
 
         #editar:hover {
             background-color: #a55817;
+        }
+
+        #nuevo-comentario, #enviar {
+            background-color: rgb(46, 169, 172) ;
+            color: #ffffff !important;
+        }
+
+        #nuevo-comentario:hover, #enviar:hover  {
+            background-color: #268a8d;
         }
 
     </style>
@@ -134,18 +168,65 @@ $libro = $stmt -> fetchObject() ;
                 <div class="card-body">
                     <p><?= $comentario -> FechaComentario ?></p>
                     <p class="card-text"><?= $comentario -> TextoComentario ?></p>
-            <?php   if(($comentario -> IDUsuario) === ($usuario -> ID))  { ?>
-                    <a href="./editarCom.php" id="editar" class="btn">Editar</a>
-                    <a href="./borrarCom.php" id="borrar" class="btn btn-danger">Borrar</a>
+            <?php   if(($comentario -> IDUsuario) === ($usuario -> IDUsuario))  { ?>
+                    <a href="./editarCom.php?id=<?= $comentario -> IDComentario ?>" id="editar" class="btn">Editar</a>
+            <?php } if((($comentario -> IDUsuario) === ($usuario -> IDUsuario )) || ($usuario -> Rol === "Administrador")) { ?>
+                    <a href="./borrarCom.php?id=<?= $comentario -> IDComentario ?>" id="borrar" class="btn btn-danger">Borrar</a>
                 </div>
-            <?php  } } 
+            <?php } } 
                 if(!$hayComentarios) { ?>
                 <div class="card-body">
                     <p class="card-text">Aún no hay comentarios sobre este libro</p>
                 </div>
             <?php } ?>
         </div>
+        <?php   $sql = "SELECT u.IDUsuario FROM Comentarios c JOIN Usuarios u ON c.IDUsuario = u.IDUsuario WHERE IDLibro = :id ;" ;
+                $stmt = $pdo -> prepare($sql) ;
+                $stmt -> bindParam(':id', $idLibro, PDO::PARAM_INT) ;
+                $stmt -> execute() ;
+
+                $id = false ;
+
+                while($userid = $stmt -> fetchObject()) {
+                    if($userid -> IDUsuario === $usuario -> IDUsuario) {
+                        $id = true ;
+                    }
+                }
+
+                if(!$id) {
+        ?>
+        <div class="d-flex justify-content-center">
+            <a class="btn" id="nuevo-comentario" data-bs-toggle="modal" data-bs-target="#commentModal">Añadir comentario</a>
+        </div>
+        <?php   } ?>
+
+        <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="commentModalLabel">Añadir Comentario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="POST">
+                            <!-- Enviar también el ID del libro -->
+                            <input type="hidden" name="idLibro" value="<?= $idLibro ?>">
+
+                            <div class="mb-3">
+                                <label for="textoComentario" class="form-label">Comentario:</label>
+                                <textarea id="textoComentario" name="textoComentario" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" id="enviar" class="btn">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
+    
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
 </html>

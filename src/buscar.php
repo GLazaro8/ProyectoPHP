@@ -45,7 +45,6 @@
         while($libro = $stmt -> fetchObject()) {
             $libros[] = $libro ;
         }
-        var_dump($libros) ;
 
         $_SESSION["_tiempo"] = time() + 3000;
 

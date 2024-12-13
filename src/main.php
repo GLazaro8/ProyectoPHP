@@ -3,17 +3,33 @@
     session_start() ;
     // session_destroy() ;
 
-    if ((empty($_SESSION)) || 
-        (time() >= $_SESSION["_tiempo"])):            
+    if ((empty($_SESSION['_usuario'])) || 
+        (time() >= $_SESSION["_tiempo"])){            
             $_SESSION = [] ;
 
             // redirigimos al login
             die(header("location: http://localhost:8080/index.php")) ;    
-    endif ;
+        }
 
     // Actualizamos el tiempo de sesión
     $_SESSION["_tiempo"] = time() + 3000;
-    
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        if(!empty($_POST)) {
+
+            $buscador = strtolower($_POST['buscador']) ;
+
+            // Variables de sesión
+            $_SESSION['_busqueda'] = $buscador ;
+            $_SESSION["_tiempo"] = time() + 3000;
+
+            header('Location: ./buscar.php') ;
+
+        } 
+        
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +101,7 @@
 </head>
 <body>
 
-    <nav class="navbar">
+    <nav class="navbar sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <img src="./assets/img/cabecera book heaven.png" alt="Logo" width="300px" class="d-inline-block align-text-top">
@@ -95,7 +111,7 @@
     </nav>
 
     <div class="bg d-flex align-items-center justify-content-center" style="height: 100vh;">
-        <form class="d-flex flex-column align-items-center w-50 mb-5" id="buscador" role="search">
+        <form class="d-flex flex-column align-items-center w-50 mb-5" id="formulario" role="search" method="post" action="">
             <figure class="text-center mb-4">
                 <blockquote class="blockquote">
                     <h1>“El destino perfecto para los amantes de la lectura”</h1>
@@ -104,13 +120,9 @@
                     Creador de <cite title="Source Title">Book Heaven</cite>
                 </figcaption>
             </figure>
+
             <div class="d-flex w-100">
-                <select class="form-select form-select-md w-25 me-2" id="select" aria-label="busqueda por">
-                    <option selected value="1">Título</option>
-                    <option value="2">Autor</option>
-                    <option value="3">Género</option>
-                </select>
-                <input class="form-control me-2" type="search" id="input-buscador" placeholder="Buscar libro" aria-label="buscar">
+                <input class="form-control me-2" type="search" name="buscador" id="buscador" placeholder="Buscar título, género, autor..." aria-label="buscar">
                 <button class="btn" id="buscar" type="submit">Buscar</button>
             </div>
         </form>

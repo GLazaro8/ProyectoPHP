@@ -27,22 +27,20 @@
             $clave = $_POST['clave'] ;
 
             // Prepramos la consulta
-            $sql = "SELECT * FROM Usuarios WHERE Email = :email" ;
+            $sql = "SELECT * FROM Usuarios WHERE Email = :email ;" ;
             $stmt = $pdo -> prepare($sql) ;
 
-            // Asociamos lo valores
             $stmt -> bindParam(':email', $email, PDO::PARAM_STR) ;
-
             // Ejecutamos la consulta
             $stmt -> execute() ;
-            $user = $stmt -> fetch(PDO::FETCH_ASSOC) ;
+            $user = $stmt -> fetchObject() ;
 
             // Verificamos que el email y la contraseña son correctos
-            if($user && $clave === $user['Contrasena']) {
+            if($user && $clave === $user -> Contrasena) {
 
                 // Guardamos el usuario en la sesión
                 $_SESSION["_tiempo"]  = time() + 3000 ;
-                $_SESSION['email'] = $user['Email'] ;
+                $_SESSION['_usuario'] = serialize($user) ;
 
                 // Lo mandamos a nuestra página main
                 header('Location: ./main.php') ;

@@ -9,7 +9,7 @@
 --
 
 CREATE TABLE GenerosLiterarios ( 
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    IDGenero INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     NombreGenero VARCHAR(100) UNIQUE 
 );
 
@@ -37,7 +37,7 @@ VALUES
 --
 
 CREATE TABLE Libros ( 
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    IDLibro INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     Titulo VARCHAR(255), 
     IDGenero INT, 
     Autor VARCHAR(255), 
@@ -111,13 +111,73 @@ INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada)
 VALUES 
 ('Las crónicas de Narnia: El león, la bruja y el armario', 4, 'C.S. Lewis', 8, 'Cuatro hermanos descubren un mundo mágico lleno de aventuras y criaturas fantásticas.', 'https://ejemplo.com/narnia.jpg');
 
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El Hobbit', 3, 'J.R.R. Tolkien', 10, 'La historia de Bilbo Bolsón y su inesperada aventura con enanos para recuperar un tesoro custodiado por un dragón.', 'https://ejemplo.com/el_hobbit.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Drácula', 12, 'Bram Stoker', 9, 'La clásica historia de horror gótico que sigue a Jonathan Harker en su encuentro con el Conde Drácula.', 'https://ejemplo.com/dracula.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La casa de los espíritus', 1, 'Isabel Allende', 8, 'Una saga familiar cargada de realismo mágico y eventos históricos en América Latina.', 'https://ejemplo.com/casa_espiritus.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Fundación', 11, 'Isaac Asimov', 10, 'Una serie de novelas de ciencia ficción que exploran la caída y resurgimiento de un imperio galáctico.', 'https://ejemplo.com/fundacion.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El nombre del viento', 3, 'Patrick Rothfuss', 9, 'La primera parte de las aventuras de Kvothe, un joven con un talento extraordinario.', 'https://ejemplo.com/nombre_viento.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('It (Eso)', 12, 'Stephen King', 9, 'Un grupo de amigos enfrenta a una entidad maligna que adopta la forma de un payaso aterrador.', 'https://ejemplo.com/it.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La metamorfosis', 10, 'Franz Kafka', 8, 'Un relato inquietante sobre un hombre que se despierta transformado en un insecto gigante.', 'https://ejemplo.com/metamorfosis.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El guardián entre el centeno', 10, 'J.D. Salinger', 8, 'La vida de un adolescente rebelde que busca sentido en un mundo que le parece falso.', 'https://ejemplo.com/guardian_centeno.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Coraline', 5, 'Neil Gaiman', 9, 'Una niña descubre un mundo paralelo que parece perfecto, pero esconde oscuros secretos.', 'https://ejemplo.com/coraline.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Dune', 11, 'Frank Herbert', 10, 'Una épica saga de ciencia ficción sobre política, religión y poder en un desierto intergaláctico.', 'https://ejemplo.com/dune.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Frankenstein', 12, 'Mary Shelley', 9, 'La historia de un científico que crea un ser vivo y enfrenta las consecuencias de su experimento.', 'https://ejemplo.com/frankenstein.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Bajo la misma estrella', 7, 'John Green', 8, 'Un romance entre dos adolescentes con cáncer que reflexionan sobre la vida y la muerte.', 'https://ejemplo.com/bajo_estrella.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El perfume', 9, 'Patrick Süskind', 9, 'Un hombre obsesionado con crear el perfume perfecto mediante métodos oscuros.', 'https://ejemplo.com/el_perfume.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Anna Karenina', 10, 'León Tolstói', 10, 'Una obra maestra de la literatura que explora el amor, la familia y las tensiones sociales en la Rusia imperial.', 'https://ejemplo.com/anna_karenina.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La divina comedia', 9, 'Dante Alighieri', 10, 'Un poema épico que describe un viaje a través del infierno, el purgatorio y el paraíso.', 'https://ejemplo.com/divina_comedia.jpg');
+
 
 -- 
 -- Estructura de la tabla 'Usuarios'
 --
 
 CREATE TABLE Usuarios ( 
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    IDUsuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     Nombre VARCHAR(100),
     Apellidos VARCHAR(100),
     NombreUsuario VARCHAR(50),
@@ -140,7 +200,7 @@ INSERT INTO Usuarios (Nombre, Apellidos, NombreUsuario, Imagen, Email, Contrasen
 --
 
 CREATE TABLE Comentarios ( 
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    IDComentario INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     IDUsuario INT, 
     IDLibro INT, 
     TextoComentario TEXT, 
@@ -149,6 +209,124 @@ CREATE TABLE Comentarios (
     FOREIGN KEY (IDLibro) REFERENCES Libros(ID) 
 );
 
--- 
--- Insertar datos en la tabla 'Comentarios'
---
+-- Insertar comentarios en la tabla 'Comentarios'
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 1, 'Un libro que no puedes dejar de leer. La narrativa es espectacular y el realismo mágico es simplemente fascinante.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 2, 'La historia es inquietante y te hace reflexionar mucho sobre la libertad y el control. Un clásico de la ciencia ficción distópica.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 3, 'La riqueza del mundo creado por Tolkien es impresionante. Una obra maestra que siempre recomiendo.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 4, 'Un relato muy interesante con una estructura narrativa única. Muy recomendable.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 5, 'Perfecto para todas las edades. Un libro que despierta la imaginación y te transporta a un mundo mágico.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 6, 'Un libro que invita a reflexionar profundamente sobre la vida y las relaciones. Me encantó.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 7, 'Una joya de la literatura. La profundidad de los personajes es increíble.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 8, 'Una historia de amor llena de crítica social. Muy disfrutable y entretenida.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 9, 'Intrigante de principio a fin. Los giros de la trama son geniales.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 10, 'Un libro que inspira y te deja con muchas enseñanzas. Muy recomendable.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 11, 'Una historia que te atrapa por completo y te hace reflexionar sobre la justicia y la humanidad.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 12, 'Llena de acción y drama, es una lectura muy emocionante.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 13, 'Una obra gótica que me encantó. El personaje principal es inolvidable.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 14, 'Una historia apasionante y llena de misterio. La recomiendo mucho.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 15, 'Un libro mágico lleno de aventuras y moralejas. Ideal para todas las edades.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 16, 'Una obra inolvidable que sentó las bases de la fantasía moderna. Me encantó.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 17, 'Un clásico del horror que no pasa de moda. Me mantuvo intrigado todo el tiempo.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 18, 'Una historia que combina magia y realidad con maestría. Altamente recomendable.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 19, 'Una de las mejores sagas de ciencia ficción que he leído. Impresionante.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 20, 'Una obra muy bien escrita con un personaje principal lleno de carisma.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 21, 'Una lectura intensa y emocionante que te mantiene enganchado hasta el final.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 22, 'Un libro inquietante y profundo. No lo podía dejar de leer.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 23, 'Un relato cargado de simbolismo y con una narrativa única. Fascinante.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 24, 'Un libro con una historia atrapante y un mensaje muy poderoso.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 25, 'Una historia mágica y oscura que me encantó de principio a fin.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 26, 'Un mundo fascinante lleno de detalles y personajes inolvidables.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 27, 'Un relato gótico inolvidable. Muy recomendable.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(1, 28, 'Una obra conmovedora y profundamente reflexiva.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(2, 29, 'Una narrativa brillante y con un mensaje impactante. Me encantó.');
+
+INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario) 
+VALUES 
+(3, 30, 'Un poema épico que nunca deja de maravillarme. Una joya literaria.');

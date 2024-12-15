@@ -171,6 +171,87 @@ INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada)
 VALUES 
 ('La divina comedia', 9, 'Dante Alighieri', 10, 'Un poema épico que describe un viaje a través del infierno, el purgatorio y el paraíso.', 'https://ejemplo.com/divina_comedia.jpg');
 
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La ladrona de libros', 10, 'Markus Zusak', 9, 'Una niña en la Alemania nazi encuentra consuelo en los libros mientras los horrores de la guerra la rodean.', 'https://ejemplo.com/ladrona_libros.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El último deseo', 3, 'Andrzej Sapkowski', 9, 'La introducción a las aventuras de Geralt de Rivia, un cazador de monstruos con un destino complicado.', 'https://ejemplo.com/ultimo_deseo.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Un mundo feliz', 2, 'Aldous Huxley', 9, 'Una visión distópica de un futuro donde la felicidad artificial se impone a costa de la libertad personal.', 'https://ejemplo.com/mundo_feliz.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La historia interminable', 3, 'Michael Ende', 10, 'Un joven descubre un libro mágico que lo transporta a un mundo de fantasía sin fin.', 'https://ejemplo.com/historia_interminable.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El cuervo y otros poemas', 12, 'Edgar Allan Poe', 9, 'Una colección de poemas oscuros y melancólicos que exploran el amor, la muerte y el misterio.', 'https://ejemplo.com/cuervo_poe.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Cumbres borrascosas', 7, 'Emily Brontë', 9, 'Una poderosa historia de amor, venganza y desolación en los páramos ingleses.', 'https://ejemplo.com/cumbres_borrascosas.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Siddhartha', 9, 'Hermann Hesse', 10, 'Un viaje espiritual que explora la búsqueda del autoconocimiento y la iluminación.', 'https://ejemplo.com/siddhartha.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Neuromante', 11, 'William Gibson', 8, 'Una novela pionera del cyberpunk que sigue a un hacker en un futuro distópico impulsado por tecnología avanzada.', 'https://ejemplo.com/neuromante.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El club de la lucha', 8, 'Chuck Palahniuk', 8, 'Un narrador anónimo crea un club clandestino de lucha que desata el caos y la autodestrucción.', 'https://ejemplo.com/club_lucha.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El jardín secreto', 5, 'Frances Hodgson Burnett', 8, 'Una niña descubre un jardín oculto que cambia su vida y la de los que la rodean.', 'https://ejemplo.com/jardin_secreto.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El hombre en el castillo', 11, 'Philip K. Dick', 9, 'Una ucronía donde los Aliados pierden la Segunda Guerra Mundial y el mundo es gobernado por los nazis y Japón.', 'https://ejemplo.com/hombre_castillo.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Los pilares de la Tierra', 10, 'Ken Follett', 9, 'Una épica saga histórica sobre la construcción de una catedral en la Inglaterra medieval.', 'https://ejemplo.com/pilares_tierra.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('La chica del tren', 8, 'Paula Hawkins', 8, 'Un thriller psicológico sobre una mujer cuya vida se enreda en un misterio que observa desde un tren.', 'https://ejemplo.com/chica_tren.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El camino de los reyes', 3, 'Brandon Sanderson', 10, 'La primera entrega de una épica serie de fantasía con intriga política, guerras y magia poderosa.', 'https://ejemplo.com/camino_reyes.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Memorias de Adriano', 9, 'Marguerite Yourcenar', 9, 'Un relato introspectivo en el que el emperador romano Adriano reflexiona sobre su vida, poder y legado.', 'https://ejemplo.com/memorias_adriano.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El silencio de los corderos', 8, 'Thomas Harris', 9, 'Un thriller escalofriante donde un joven detective busca la ayuda de un asesino encarcelado para capturar a otro criminal.', 'https://ejemplo.com/silencio_corderos.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El libro de la selva', 5, 'Rudyard Kipling', 8, 'Las aventuras de Mowgli, un niño criado por lobos, y su vida en la selva llena de peligros y amistades.', 'https://ejemplo.com/libro_selva.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('American Gods', 3, 'Neil Gaiman', 9, 'Una historia de mitología moderna donde dioses antiguos y nuevos luchan por la relevancia en el mundo actual.', 'https://ejemplo.com/american_gods.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('El extranjero', 9, 'Albert Camus', 9, 'Un hombre indiferente enfrenta las consecuencias de sus acciones en un mundo absurdo y sin sentido.', 'https://ejemplo.com/extranjero.jpg');
+
+INSERT INTO Libros (Titulo, IDGenero, Autor, Nota, Sinopsis, URLPortada) 
+VALUES 
+('Crimen y castigo', 10, 'Fiódor Dostoyevski', 10, 'Una obra maestra sobre la moral, la redención y la psicología de un hombre que comete un asesinato.', 'https://ejemplo.com/crimen_castigo.jpg');
+
+
 
 -- 
 -- Estructura de la tabla 'Usuarios'

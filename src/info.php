@@ -1,78 +1,110 @@
-<?php 
-
-session_start() ;
-// session_destroy() ;
+<?php
+ob_start();
+session_start();
 
 if ((empty($_SESSION['_usuario'])) ||  
-    (time() >= $_SESSION["_tiempo"])){            
-        $_SESSION = [] ;
+    (time() >= $_SESSION["_tiempo"])) {            
+    $_SESSION = [];
 
-        // redirigimos al login
-        die(header("location: http://localhost:8080/index.php")) ;    
-    }
+    // Redirigimos al login
+    die(header("location: http://localhost:8080/index.php"));    
+}
 
 // Actualizamos el tiempo de sesión
 $_SESSION["_tiempo"] = time() + 3000;
-$usuario = unserialize($_SESSION['_usuario']) ;
+$usuario = unserialize($_SESSION['_usuario']);
 
 try {
-
-    $pdo = new PDO("mysql:host=db;dbname=BookHeaven;charset=utf8mb4", "root", "") ;
-
-    $pdo -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION) ;
-
+    $pdo = new PDO("mysql:host=db;dbname=BookHeaven;charset=utf8mb4", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $excepcion) {
-    die("ERROR de conexión con la base de datos: " . $excepcion->getMessage()) ;
+    die("ERROR de conexión con la base de datos: " . $excepcion->getMessage());
 }
 
-if(isset($_GET['id'])) {
+if (isset($_GET['id'])) {
     $idLibro = $_GET['id'];
 }
 
 $mostrarModal = false; // Para reabrir el modal si hay errores
+$mostrarEditarModal = false; // Para reabrir el modal de edición si hay errores
+$comentarioEditado = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $textoComentario = $_POST['textoComentario'] ?? '';
+    // Verificamos si es una edición (idComentario presente)
+    if (isset($_POST['idComentario']) && is_numeric($_POST['idComentario'])) {
+        $idComentario = (int)$_POST['idComentario'];
+        $textoComentario = $_POST['textoComentario'] ?? '';
 
-    if (!empty($textoComentario)) {
-        $idUsu = $usuario->IDUsuario;
-        $idLib = $idLibro;
-        $fecha = date('Y-m-d H:i:s');
+        if (!empty($textoComentario)) {
+            // Actualizar comentario existente
+            $sql = "UPDATE Comentarios 
+                    SET TextoComentario = :textoComentario, FechaComentario = :fecha 
+                    WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
+            $stmt->bindParam(':fecha', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
+            $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $sql = "INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario, FechaComentario) 
-                VALUES (:idUsu, :idLib, :textoComentario, :fecha)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':idUsu', $idUsu, PDO::PARAM_INT);
-        $stmt->bindParam(':idLib', $idLib, PDO::PARAM_INT);
-        $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
-        $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
-        $stmt->execute();
+            // Redirigir para evitar reenvío POST
+            header("Location: ./info.php?id=$idLibro");
+            exit;
+        } else {
+            // Reabrir el modal de edición si el texto está vacío
+            $mostrarEditarModal = true;
 
-        // Redirigir para evitar reenvíos POST
-        header("Location: ./info.php?id=$idLib");
-        exit;
+            // Obtener datos del comentario para mostrar en el modal
+            $sql = "SELECT * FROM Comentarios WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
+            $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $comentarioEditado = $stmt->fetchObject();
+        }
     } else {
-        $mostrarModal = true; // Si no hay texto, mostramos el modal otra vez
+        // Si no es edición, asumimos que es un nuevo comentario
+        $textoComentario = $_POST['textoComentario'] ?? '';
+
+        if (!empty($textoComentario)) {
+            $idUsu = $usuario->IDUsuario;
+            $idLib = $idLibro;
+            $fecha = date('Y-m-d H:i:s');
+
+            $sql = "INSERT INTO Comentarios (IDUsuario, IDLibro, TextoComentario, FechaComentario) 
+                    VALUES (:idUsu, :idLib, :textoComentario, :fecha)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':idUsu', $idUsu, PDO::PARAM_INT);
+            $stmt->bindParam(':idLib', $idLib, PDO::PARAM_INT);
+            $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
+            $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+            $stmt->execute();
+
+            // Redirigir para evitar reenvío POST
+            header("Location: ./info.php?id=$idLib");
+            exit;
+        } else {
+            // Reabrir el modal de nuevo comentario si está vacío
+            $mostrarModal = true;
+        }
     }
 }
 
-$sql = "SELECT * FROM Libros l JOIN GenerosLiterarios gl ON l.IDGenero = gl.IDGenero WHERE l.IDLibro = :id ;" ;
-$stmt = $pdo -> prepare($sql) ;
+// Cargar detalles del libro
+$sql = "SELECT * FROM Libros l JOIN GenerosLiterarios gl ON l.IDGenero = gl.IDGenero WHERE l.IDLibro = :id;";
+$stmt = $pdo->prepare($sql);
 $stmt->bindParam(':id', $idLibro, PDO::PARAM_INT);
-$stmt -> execute() ;
+$stmt->execute();
+$libro = $stmt->fetchObject();
 
-$libro = $stmt -> fetchObject() ;
-
-$comentarioEditado = null;
-$mostrarEditarModal = false;
-
+// Cargar detalles del comentario a editar
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
-    $idComentario = (int) $_GET['edit'];
+    $idComentario = (int)$_GET['edit'];
 
-    // Obtener los datos del comentario para edición
     $sql = "SELECT * FROM Comentarios WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
-    $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT); // Solo el autor puede editar
+    $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT);
     $stmt->execute();
     $comentarioEditado = $stmt->fetchObject();
 
@@ -80,31 +112,8 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
         $mostrarEditarModal = true; // Mostrar modal de edición automáticamente
     }
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
-    $idComentario = (int) $_POST['idComentario'];
-    $textoComentario = $_POST['textoComentario'] ?? '';
-
-    if (!empty($textoComentario)) {
-        $sql = "UPDATE Comentarios SET TextoComentario = :textoComentario, FechaComentario = :fecha 
-                WHERE IDComentario = :idComentario AND IDUsuario = :idUsuario";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':textoComentario', $textoComentario, PDO::PARAM_STR);
-        $stmt->bindParam(':fecha', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmt->bindParam(':idComentario', $idComentario, PDO::PARAM_INT);
-        $stmt->bindParam(':idUsuario', $usuario->IDUsuario, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Redirigir para evitar reenvíos POST
-        header("Location: ./info.php?id=$idLibro");
-        exit;
-    } else {
-        $mostrarEditarModal = true; // Reabrir modal si hay errores
-    }
-}
-
+ob_end_flush();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,6 +151,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
 
         #editar:hover {
             background-color: #a55817;
+        }
+
+        #nuevo-comentario {
+            margin-bottom: 10px;
         }
 
         #nuevo-comentario, #enviar, #guardar {
@@ -189,7 +202,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
             <h2>Comentarios</h2>
         </div>
         <hr>
-        <div id="comentario" class="card my-3">
             <?php
                 $sql = "SELECT * FROM Comentarios c JOIN Usuarios u ON c.IDUsuario = u.IDUsuario WHERE IDLibro = :id ;" ;
                 $stmt = $pdo -> prepare($sql) ;
@@ -202,6 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
                     $hayComentarios = true;
 
             ?>
+            <div id="comentario" class="card my-3">
                 <div class="card-header d-flex align-items-center">
                     <img class="d-inline" src="<?= $comentario -> Imagen ?>" style="height: 50px;" alt="">
                     <h3 class="d-inline ms-2"><?= $comentario -> NombreUsuario ?></h3>
@@ -213,14 +226,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
                     <a href="./info.php?id=<?= $idLibro ?>&edit=<?= $comentario->IDComentario ?>" id="editar" class="btn">Editar</a>
             <?php } if((($comentario -> IDUsuario) === ($usuario -> IDUsuario )) || ($usuario -> Rol === "Administrador")) { ?>
                     <a href="./borrar.php?id=<?= $comentario -> IDComentario ?>" id="borrar" class="btn btn-danger">Borrar</a>
+                <?php } ?>
                 </div>
-            <?php } } 
+            </div>
+            <?php }  
                 if(!$hayComentarios) { ?>
+            <div id="no-comentario" class="card my-3">
                 <div class="card-body">
                     <p class="card-text">Aún no hay comentarios sobre este libro</p>
                 </div>
             <?php } ?>
-        </div>
+            </div>
         <?php   $sql = "SELECT u.IDUsuario FROM Comentarios c JOIN Usuarios u ON c.IDUsuario = u.IDUsuario WHERE IDLibro = :id ;" ;
                 $stmt = $pdo -> prepare($sql) ;
                 $stmt -> bindParam(':id', $idLibro, PDO::PARAM_INT) ;
@@ -240,7 +256,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
             <a class="btn" id="nuevo-comentario" data-bs-toggle="modal" data-bs-target="#commentModal">Añadir comentario</a>
         </div>
         <?php   } ?>
-
                 <!-- MODAL PARA AÑADIR COMENTARIO -->
         <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -265,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
             </div>
         </div>
 
-                <!-- MODAL PARA EDITAR COMENTARIO -->
+        <!-- MODAL PARA EDITAR COMENTARIO -->
         <div class="modal fade <?= $mostrarEditarModal ? 'show' : '' ?>" id="editModal" tabindex="-1" aria-hidden="true" style="<?= $mostrarEditarModal ? 'display: block;' : '' ?>">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -277,7 +292,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
                         <form action="" method="POST">
                             <!-- Campo oculto para el ID del comentario -->
                             <input type="hidden" name="idComentario" value="<?= $comentarioEditado->IDComentario ?? '' ?>">
-
                             <div class="mb-3">
                                 <label for="textoComentario" class="form-label">Comentario:</label>
                                 <textarea id="textoComentario" name="textoComentario" class="form-control" rows="4" required><?= $comentarioEditado->TextoComentario ?? '' ?></textarea>
@@ -295,7 +309,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
-
 <?php if ($mostrarEditarModal){ ?>
     var editModal = new bootstrap.Modal(document.getElementById('editModal'), {
         backdrop: 'static',
@@ -303,7 +316,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idComentario'])) {
     });
     editModal.show();
     <?php } ?>
-
 </script>
 
 </html>
